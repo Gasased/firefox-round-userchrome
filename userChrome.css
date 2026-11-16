@@ -89,17 +89,29 @@ toolbaritem:last-of-type {
 :root {
     --uc-container-bleed: 70%;
 }
+/* Firefox keeps drawing its own accent outline. On top of it, a 1px ring
+   (a gradient masked down to its border) carries the container color and
+   fades out. Firefox's "border-area" trick only works in its built-in
+   styles; in userChrome.css it voids the whole background. */
 .tabbrowser-tab[usercontextid][selected]:not([multiselected]) > .tab-stack > .tab-background {
-    border: 1px solid transparent !important;
-    outline-color: transparent !important;
-    background:
-        linear-gradient(
-            to bottom,
-            var(--identity-stroke-color, var(--identity-icon-color)),
-            transparent var(--uc-container-bleed)
-        ) border-box border-area,
-        var(--tab-border-color-accent, linear-gradient(var(--tab-border-color-selected), var(--tab-border-color-selected))) border-box border-area,
-        var(--tab-background-color-selected) padding-box !important;
+    position: relative;
+}
+.tabbrowser-tab[usercontextid][selected]:not([multiselected]) > .tab-stack > .tab-background::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        var(--identity-stroke-color, var(--identity-icon-color)),
+        transparent var(--uc-container-bleed)
+    );
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
 }
 
 /***** NAV BAR *****/
