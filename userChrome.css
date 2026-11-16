@@ -1,0 +1,636 @@
+* {
+    font-family: "Ubuntu Light", tahoma, arial, helvetica, sans-serif;
+    font-weight: lighter;
+}
+
+/***** TAB BAR *****/
+
+/* Shrink tab bar to 32px: 24px tab + 2*4px margin.
+   FF160 derives group labels, split-view tabs and the selected-tab outline
+   from these two vars, so size the bar through them, not hard heights. */
+:root,
+#tabbrowser-tabs {
+    --tab-min-height: 24px !important;
+    --tab-margin-block: 4px !important;
+}
+
+:root {
+    /* FF160: --toolbar-bgcolor was renamed to --toolbar-background-color, and on
+       Windows 11 (Mica) it is semi-transparent. Floating bars need an opaque base,
+       or the page shows through. Change the two colors here to restyle the bars. */
+    --uc-bar-bg: var(--lwt-accent-color, light-dark(#f9f9fb, #2b2a33));
+}
+
+#tabs-newtab-button .toolbarbutton-icon {
+    width: 32px !important;
+    padding: 8px !important;
+}
+
+#alltabs-button {
+    display: none;
+}
+
+#navigator-toolbox {
+    /* Remove black border */
+    margin-bottom: -1px;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.16),
+        0 3px 6px rgba(0, 0, 0, 0.23) !important;
+    z-index: 1000 !important;
+}
+
+/* Move close button to the right on hover */
+.tab-label-container {
+    order: 0;
+    font-size: 13px;
+}
+
+.tabbrowser-tab .tab-close-button {
+    display: none !important;
+    border-radius: 8px !important;
+    margin-left: 2px !important;
+    margin-right: -4.5px !important;
+}
+
+/* .tabbrowser-tab[selected="true"]:not([pinned]):hover .tab-icon-stack {
+	display: none !important;
+	order: 1;
+}
+*/
+
+/* FF160: [selected] is a bare attribute now, so [selected="true"] never matched */
+.tabbrowser-tab[selected]:not([pinned]):hover .tab-close-button {
+    display: flex !important;
+    position: relative;
+    order: 3;
+}
+
+/* Remove silly space */
+.titlebar-spacer {
+    width: 8px !important;
+}
+
+/** Buttons in tab bar **/
+#TabsToolbar .toolbarbutton-1 .toolbarbutton-icon {
+    width: 32px !important;
+    padding: 8px !important;
+    height: 100% !important;
+}
+
+toolbaritem:last-of-type {
+    margin-right: 16px !important;
+}
+
+/* Container color bar: Firefox's own placement (FF160 positions it with
+   offset vars; the old margin override shifted it sideways).
+   Selected container tab: the container color bleeds from the top line down
+   into the tab outline, fading into the normal accent border by the bottom.
+   --uc-container-bleed: how far down the color reaches (0% = none). */
+:root {
+    --uc-container-bleed: 70%;
+}
+.tabbrowser-tab[usercontextid][selected]:not([multiselected]) > .tab-stack > .tab-background {
+    border: 1px solid transparent !important;
+    outline-color: transparent !important;
+    background:
+        linear-gradient(
+            to bottom,
+            var(--identity-stroke-color, var(--identity-icon-color)),
+            transparent var(--uc-container-bleed)
+        ) border-box border-area,
+        var(--tab-border-color-accent, linear-gradient(var(--tab-border-color-selected), var(--tab-border-color-selected))) border-box border-area,
+        var(--tab-background-color-selected) padding-box !important;
+}
+
+/***** NAV BAR *****/
+.urlbar-input-box {
+    font-size: 13px !important;
+    font-weight: light !important;
+}
+
+#nav-bar {
+    position: absolute !important;
+    top: 40px !important;
+    left: 8px !important;
+    right: 8px !important;
+    height: 0px !important;
+    border-radius: 8px !important;
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.16),
+        0 3px 6px rgba(0, 0, 0, 0.23) !important;
+
+    z-index: 1002 !important;
+    min-height: 0px !important;
+    transition:
+        height var(--animation-easing-function) 500ms 250ms,
+        opacity var(--animation-easing-function) 500ms 250ms !important;
+    opacity: 0 !important;
+}
+
+:root[customizing] #nav-bar,
+#navigator-toolbox:hover #nav-bar,
+#nav-bar:focus-within {
+    height: 40px !important;
+    opacity: 100 !important;
+    transition:
+        height var(--animation-easing-function) 500ms 100ms,
+        opacity var(--animation-easing-function) 500ms 100ms !important;
+}
+
+/* The urlbar is parked off-screen while the bar is collapsed and snaps in at the
+   same moment the bar starts growing. It fades with #nav-bar's own opacity, like
+   the buttons. (It used to carry its own opacity too, which stacked on top of the
+   bar's fade and made it lag behind.) */
+#urlbar-container {
+    --urlbar-container-height: 32px !important;
+    position: relative !important;
+    top: -512px !important;
+    transition: top linear 0ms 250ms !important;
+}
+
+:root[customizing] #nav-bar #urlbar-container,
+#navigator-toolbox:hover #nav-bar #urlbar-container,
+#nav-bar:focus-within #urlbar-container {
+    top: 0 !important;
+    transition: top linear 0ms 100ms !important;
+}
+
+/* Mini window (FF160 "Move to Mini Window"): Firefox itself slides the whole
+   toolbox in from the top on hover, so the floating/collapsing nav-bar above
+   must stand down there, or the revealed bar is empty. */
+:root[mini-window] #nav-bar {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    opacity: 1 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+:root[mini-window] #urlbar-container {
+    top: 0 !important;
+    transition: none !important;
+}
+
+#nav-bar:focus-within #urlbar-input {
+    height: 28px !important;
+}
+
+#urlbar-input-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Dropdown (FF160: a popover that positions itself and paints its own joint
+   background in two halves: .urlbar-background on top, .urlbarView-background
+   below). Only recolor it; never set position/background on .urlbarView.
+   Active address bar + dropdown = one solid, darker surface that stays inside
+   the field's width. Tune --uc-active-bg (color). */
+:root {
+    --uc-active-bg: color-mix(in srgb, var(--uc-bar-bg), black 35%);
+    /* Neutral outline when inactive (the focus ring stays colored) */
+    --uc-field-stroke: light-dark(rgba(0, 0, 0, 0.14), rgba(255, 255, 255, 0.14));
+}
+:root {
+    /* FF160 grows the open bar 8px past the field on every side ("leaks out") */
+    --urlbar-background-overhang-open: 0px !important;
+}
+#urlbar[focused],
+#urlbar[popover-open] {
+    --urlbar-input-growth-open-inline: 0px !important;
+    --urlbar-input-growth-open-block: 0px !important;
+    --urlbar-background-color-focus: var(--uc-active-bg) !important;
+}
+/* The field is its own stock-rounded box in every state: its background starts
+   where the field/focus ring starts, skipping #urlbar's 8px left padding (the
+   gap to the reload button). */
+#urlbar > .urlbar-background {
+    inset-inline-start: 8px !important;
+}
+/* Same solid color on both halves; the ripple would only tint the top half. */
+#urlbar[popover-open] > .urlbar-background,
+#urlbar .urlbarView-background {
+    background-color: var(--uc-active-bg) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+}
+
+/* Dropdown inner margin: rows pulled in from left, right and bottom (top
+   untouched). --uc-dropdown-padding sets it. */
+:root {
+    --uc-dropdown-padding: 8px;
+}
+#urlbar .urlbarView-results {
+    padding-inline: var(--uc-dropdown-padding) !important;
+    padding-block-end: var(--uc-dropdown-padding) !important;
+}
+
+/* Clip extension buttons when navbar is collapsed */
+#nav-bar toolbaritem.unified-extensions-item {
+    overflow: hidden !important;
+}
+
+/***** NAV BUTTONS *****/
+/* Back/forward/reload: stock Firefox look (no custom background or outline). */
+
+/* Inactive field: neutral outline, stock radius. */
+#urlbar:not([focused], [popover-open]) > .urlbar-background {
+    border: 1px solid var(--uc-field-stroke) !important;
+}
+
+#urlbar {
+    padding-left: 8px !important;
+}
+
+/* Focus ripple: a feather-edged darkening circle spreads across the field when
+   it gets focus, and shrinks back on blur.
+   ponytail: CSS can't read the click point, so it grows from --uc-ripple-x.
+   Exact click origin needs a userChrome.js loader (fx-autoconfig) to set
+   --uc-ripple-x on mousedown. */
+@property --uc-ripple-r {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+}
+:root {
+    --uc-ripple-x: 22%; /* where the circle starts, across the field */
+    --uc-ripple-color: light-dark(rgba(0, 0, 0, 0.07), rgba(0, 0, 0, 0.3));
+}
+#urlbar > .urlbar-background {
+    --uc-ripple-r: 0px;
+    background-image: radial-gradient(
+        circle at var(--uc-ripple-x) 50%,
+        var(--uc-ripple-color) 0,
+        var(--uc-ripple-color) calc(var(--uc-ripple-r) * 0.45),
+        transparent var(--uc-ripple-r)
+    ) !important;
+    transition: --uc-ripple-r 200ms cubic-bezier(0.4, 0, 1, 1) !important;
+}
+#urlbar[focused] > .urlbar-background {
+    --uc-ripple-r: 1800px;
+    transition: --uc-ripple-r 450ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#bookmarks-menu-button {
+    margin-right: 16px !important;
+}
+
+/***** BOOKMARKS BAR *****/
+
+#PersonalToolbar {
+    position: absolute !important;
+    top: 86px !important;
+    left: 8px !important;
+    right: 8px !important;
+    height: 0px !important;
+    border-radius: 8px !important;
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.16),
+        0 3px 6px rgba(0, 0, 0, 0.23) !important;
+
+    z-index: 1001 !important;
+    min-height: 0px !important;
+    transition:
+        height var(--animation-easing-function) 500ms 200ms,
+        opacity var(--animation-easing-function) 500ms 200ms !important;
+    opacity: 0 !important;
+}
+
+:root[customizing] #PersonalToolbar,
+#navigator-toolbox:hover #PersonalToolbar,
+#PersonalToolbar:focus-within {
+    height: 40px !important;
+    opacity: 100 !important;
+    transition:
+        height var(--animation-easing-function) 500ms 150ms,
+        opacity var(--animation-easing-function) 500ms 150ms !important;
+}
+
+/***** FIX THEMES *****/
+/* Frosted glass under the floating bars. Tune --uc-glass-tint (0% = clear,
+   100% = solid).
+   ponytail: tested on FF160 — backdrop-filter in the browser UI cannot see web
+   page content (pages render in a separate process/layer), so the blur below is
+   a no-op over pages. The frost is faked with tint + grain instead. Keep the
+   blur line: it starts working if Firefox ever allows it. */
+:root {
+    --uc-glass-tint: 57%;
+    --uc-glass-blur: 8px;
+}
+#nav-bar,
+#PersonalToolbar {
+    background-color: color-mix(in srgb, var(--uc-bar-bg) var(--uc-glass-tint), transparent) !important;
+    backdrop-filter: blur(var(--uc-glass-blur)) saturate(160%) !important;
+}
+
+/* Grain on the glass. Tune --uc-glass-noise (0 = off, ~0.15 = heavy). */
+:root {
+    --uc-glass-noise: 0.1;
+}
+#nav-bar::before,
+#PersonalToolbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1; /* above the glass, below the buttons */
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--uc-glass-noise);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* FF160: keep bookmark folders/items vertically centered in the 40px bar */
+#PersonalToolbar,
+#PlacesToolbar,
+#PlacesToolbarItems,
+#personal-bookmarks {
+    align-items: center !important;
+    max-height: none !important;
+}
+#PlacesToolbarItems > .bookmark-item {
+    margin-block: 0 !important;
+}
+
+#nav-bar {
+    /* If your animated theme doesn't show in the nav-bar, uncomment the following line: */
+    /* background-image: var(--lwt-additional-images); */
+    /* (and obviously, comment out the following:) */
+    background-image: var(--lwt-header-image), var(--lwt-additional-images);
+
+    background-repeat: var(--lwt-background-tiling) !important;
+
+    /* If your theme doesn't fill out the screen, uncomment the following line: */
+    /* background-color: var(--lwt-accent-color) !important; */
+
+    background-position:
+        right top,
+        var(--lwt-background-alignment) !important;
+}
+
+#PersonalToolbar {
+    /* If your animated theme doesn't show in the bookmark-bar, uncomment the following line: */
+    /* background-image: var(--lwt-additional-images); */
+    /* (and obviously, comment out the following:) */
+    background-image: var(--lwt-header-image), var(--lwt-additional-images);
+
+    background-repeat: var(--lwt-background-tiling) !important;
+
+    /* If your theme doesn't fill out the screen, uncomment the following line: */
+    /* background-color: var(--lwt-accent-color) !important; */
+
+    background-position:
+        right top,
+        var(--lwt-background-alignment) !important;
+}
+
+/***** NOTIFICATION STACK *****/
+.notificationbox-stack {
+    z-index: 1010 !important;
+    width: 50% !important;
+    border-radius: 8px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+}
+
+#nav-bar:hover,
+#nav-bar:focus-within {
+    z-index: 1020 !important;
+}
+
+/***** TAB CONTEXT MENU ICONS *****/
+/* Right-click on a tab. Firefox renders no icon box for these items, so one is
+   injected with ::before. Every URL below was verified to exist in this build's
+   omni.ja, and every SVG uses fill="context-fill" so it follows the theme.
+   Add-on items (SingleFile, Translate this page) already carry their own icon
+   and are excluded via :not(.menuitem-iconic) / :not(.menu-iconic). */
+
+#tabContextMenu > menuitem:not(.menuitem-iconic)::before,
+#tabContextMenu > menu:not(.menu-iconic)::before {
+    content: "";
+    display: flex;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    -moz-context-properties: fill, fill-opacity;
+    fill: currentColor;
+    fill-opacity: 0.85;
+}
+
+/* Items with no icon still get the empty 16px box above, so labels stay aligned. */
+
+#context_openANewTab::before {
+    background-image: url("chrome://browser/skin/new-tab.svg");
+}
+
+#context_moveTabToGroup::before {
+    background-image: url("chrome://browser/skin/tabbrowser/tab-groups.svg");
+}
+
+#context_reloadTab::before,
+#context_reloadSelectedTabs::before {
+    background-image: url("chrome://global/skin/icons/reload.svg");
+}
+
+#context_toggleMuteTab::before,
+#context_toggleMuteSelectedTabs::before {
+    background-image: url("chrome://global/skin/media/audio-muted.svg");
+}
+
+#context_pinTab::before,
+#context_unpinTab::before,
+#context_pinSelectedTabs::before,
+#context_unpinSelectedTabs::before {
+    background-image: url("chrome://browser/skin/pin.svg");
+}
+
+#context_duplicateTab::before,
+#context_duplicateTabs::before {
+    background-image: url("chrome://global/skin/icons/edit-copy.svg");
+}
+
+#context_bookmarkTab::before,
+#context_bookmarkSelectedTabs::before {
+    background-image: url("chrome://browser/skin/bookmark-hollow.svg");
+}
+
+#context_moveTabOptions::before {
+    background-image: url("chrome://global/skin/icons/move-16.svg");
+}
+
+/* Container identity icons are NOT under chrome://browser/content/ -- that maps to
+   browser/content/browser/. chrome.manifest registers them separately as
+   "resource usercontext-content browser/content/". */
+#context_reopenInContainer::before {
+    background-image: url("resource://usercontext-content/briefcase.svg");
+}
+
+#context_sendTabToDevice::before {
+    background-image: url("chrome://browser/skin/send-tab.svg"); /* FF160 removed send-tab-20.svg */
+}
+
+#context_closeTab::before,
+#context_closeSelectedTabs::before {
+    background-image: url("chrome://global/skin/icons/close.svg");
+}
+
+#context_closeDuplicateTabs::before {
+    background-image: url("chrome://global/skin/icons/delete.svg");
+}
+
+#context_undoCloseTab::before {
+    background-image: url("chrome://global/skin/icons/undo.svg");
+}
+
+/* Submenu children of "Move Tab" and "Close Multiple Tabs" */
+#context_moveTabOptions > menupopup > menuitem:not(.menuitem-iconic)::before,
+#context_closeTabOptions > menupopup > menuitem:not(.menuitem-iconic)::before {
+    content: "";
+    display: flex;
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    -moz-context-properties: fill, fill-opacity;
+    fill: currentColor;
+    fill-opacity: 0.85;
+}
+
+#context_moveToStart::before {
+    background-image: url("chrome://global/skin/icons/shaft-arrow-left.svg");
+}
+
+#context_moveToEnd::before {
+    background-image: url("chrome://global/skin/icons/shaft-arrow-right.svg");
+}
+
+#context_openTabInWindow::before,
+#context_openTabInMiniWindow::before {
+    background-image: url("chrome://browser/skin/window.svg");
+}
+
+/* --- Verified against browser.xhtml inside this build's omni.ja --- */
+
+/* Split view */
+#context_moveTabToSplitView::before {
+    background-image: url("chrome://browser/skin/split-view-right-16.svg");
+}
+
+#context_separateSplitView::before {
+    background-image: url("chrome://browser/skin/split-view-left-16.svg");
+}
+
+#context_reverseSplitView::before {
+    background-image: url("chrome://global/skin/icons/swap-horizontal-20.svg");
+}
+
+/* Tab groups (conditional items) */
+#context_moveTabToNewGroup::before,
+#context_moveTabToSavedGroup::before,
+#context_ungroupTab::before,
+#context_ungroupSplitView::before,
+#context_moveSplitViewToNewGroup::before {
+    background-image: url("chrome://browser/skin/tabbrowser/tab-groups.svg");
+}
+
+/* Unload Tab */
+#context_unloadTab::before {
+    background-image: url("chrome://global/skin/icons/moon.svg"); /* FF160 removed sync-off.svg */
+}
+
+/* Play Tab (shown instead of Mute when a tab is blocked from autoplaying) */
+#context_playTab::before,
+#context_playSelectedTabs::before {
+    background-image: url("chrome://global/skin/media/play-fill.svg");
+}
+
+/* Ask an AI Chatbot */
+#context_askChat::before,
+#context_askChatSummarize::before,
+#context_createAITab::before {
+    background-image: url("chrome://global/skin/icons/lightbulb.svg");
+}
+
+/* Add Note / Edit Note */
+#context_addNote::before,
+#context_editNote::before {
+    background-image: url("chrome://global/skin/icons/tab-notes.svg");
+}
+
+
+/* Fullscreen-only items */
+#context_fullscreenAutohide::before {
+    background-image: url("chrome://browser/skin/fullscreen.svg");
+}
+
+#context_fullscreenExit::before {
+    background-image: url("chrome://browser/skin/fullscreen-exit.svg");
+}
+
+/* --- Custom pictograms ------------------------------------------------------
+   These are inlined rather than pulled from omni.ja, either because Firefox
+   ships no equivalent glyph or because the built-in one carries no meaning here.
+   They are painted as a mask filled with currentColor instead of relying on
+   -moz-context-properties, which does not resolve for data: URIs -- that is why
+   the first attempt at the Share icon came out solid black. */
+
+#tabContextMenu menuitem.uc-mask::before,
+#tabContextMenu menu.uc-mask::before,
+#context_selectAllTabs::before,
+#context_shareSelectedTabs::before,
+#tabContextMenu > menu[label="Share"]::before,
+#tabContextMenu > menuitem[label="Share"]::before,
+#context_closeTabOptions::before,
+#context_closeTabsToTheStart::before,
+#context_closeTabsToTheEnd::before,
+#context_closeOtherTabs::before {
+    background-image: none;
+    background-color: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 16px;
+    opacity: 0.85;
+}
+
+/* Share: three linked nodes. Firefox ships no share-nodes glyph anywhere in
+   omni.ja, so this one is drawn here. The visible "Share" submenu is inserted at
+   runtime and has no stable id, hence the label match. */
+#context_shareSelectedTabs::before,
+#tabContextMenu > menu[label="Share"]::before,
+#tabContextMenu > menuitem[label="Share"]::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Ccircle%20cx=%2212%22%20cy=%223.6%22%20r=%222.1%22/%3E%3Ccircle%20cx=%2212%22%20cy=%2212.4%22%20r=%222.1%22/%3E%3Ccircle%20cx=%224%22%20cy=%228%22%20r=%222.1%22/%3E%3Cpath%20d=%22M5.85%206.98%2010.15%204.62M5.85%209.02l4.3%202.36%22/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Close Multiple Tabs: three crosses stacked the way a kanji repeats a radical
+   to mean "many of it". */
+#context_closeTabOptions::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Cpath%20d=%22M5.60%201.50L10.40%206.30M10.40%201.50L5.60%206.30%22/%3E%3Cpath%20d=%22M1.80%209.20L6.60%2014.00M6.60%209.20L1.80%2014.00%22/%3E%3Cpath%20d=%22M9.40%209.20L14.20%2014.00M14.20%209.20L9.40%2014.00%22/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Close Tabs to Left / Right / Other Tabs.
+   Solid block = the tab that survives, cross = what gets closed. */
+#context_closeTabsToTheStart::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Cpath%20d=%22M1.70%205.40L6.90%2010.60M6.90%205.40L1.70%2010.60%22/%3E%3C/g%3E%3Crect%20x=%229.6%22%20y=%223.4%22%20width=%225.6%22%20height=%229.2%22%20rx=%221.4%22%20fill=%22black%22%20stroke=%22none%22/%3E%3C/svg%3E");
+}
+
+#context_closeTabsToTheEnd::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Cpath%20d=%22M9.10%205.40L14.30%2010.60M14.30%205.40L9.10%2010.60%22/%3E%3C/g%3E%3Crect%20x=%220.8%22%20y=%223.4%22%20width=%225.6000000000000005%22%20height=%229.2%22%20rx=%221.4%22%20fill=%22black%22%20stroke=%22none%22/%3E%3C/svg%3E");
+}
+
+#context_closeOtherTabs::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Cpath%20d=%22M0.70%206.10L4.50%209.90M4.50%206.10L0.70%209.90%22/%3E%3Cpath%20d=%22M11.50%206.10L15.30%209.90M15.30%206.10L11.50%209.90%22/%3E%3C/g%3E%3Crect%20x=%225.8%22%20y=%223.4%22%20width=%224.3999999999999995%22%20height=%229.2%22%20rx=%221.4%22%20fill=%22black%22%20stroke=%22none%22/%3E%3C/svg%3E");
+}
+
+/* Select All Tabs: dashed selection marquee around three tab blocks -- same block
+   language as the close-* icons, so the set reads as one family. */
+#context_selectAllTabs::before {
+    mask-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2016%2016%22%20width=%2216%22%20height=%2216%22%3E%3Cg%20stroke=%22black%22%20stroke-width=%221.5%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%20fill=%22none%22%3E%3Crect%20x=%221%22%20y=%223%22%20width=%2214%22%20height=%2210%22%20rx=%221.8%22%20stroke-dasharray=%222.7%202.1%22/%3E%3C/g%3E%3Crect%20x=%223.1%22%20y=%225.6%22%20width=%222.9%22%20height=%224.8%22%20rx=%220.9%22%20fill=%22black%22%20stroke=%22none%22/%3E%3Crect%20x=%226.55%22%20y=%225.6%22%20width=%222.9%22%20height=%224.8%22%20rx=%220.9%22%20fill=%22black%22%20stroke=%22none%22/%3E%3Crect%20x=%2210.0%22%20y=%225.6%22%20width=%222.9%22%20height=%224.8%22%20rx=%220.9%22%20fill=%22black%22%20stroke=%22none%22/%3E%3C/svg%3E");
+}
