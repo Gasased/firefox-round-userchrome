@@ -185,10 +185,6 @@ toolbaritem:last-of-type {
     transition: none !important;
 }
 
-#nav-bar:focus-within #urlbar-input {
-    height: 28px !important;
-}
-
 #urlbar-input-container {
     width: 100% !important;
     height: 100% !important;
